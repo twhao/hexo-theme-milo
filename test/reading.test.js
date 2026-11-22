@@ -41,6 +41,23 @@ test('reading progress, chapter highlight, mobile anchor focus and no-TOC fallba
   dom.window.close();
 });
 
+test('without progress or a TOC the reading tracker does no scroll work',async()=>{
+  const {dom,d,scroll}=await setup(true,(w,document)=>{
+    document.querySelector('.reading-progress').remove();
+    document.querySelectorAll('.toc').forEach(toc=>toc.remove());
+    const add=w.addEventListener.bind(w);
+    w.addEventListener=(type,...args)=>{
+      assert.ok(!['scroll','resize','load'].includes(type),type);
+      add(type,...args);
+    };
+    document.querySelector('article').getBoundingClientRect=()=>{assert.fail('Unexpected progress measurement');};
+  });
+  scroll(-500);
+  assert.ok(d.querySelector('.copy-code'));
+  assert.ok(d.querySelector('.lightbox-image'));
+  dom.window.close();
+});
+
 test('copy excludes gutter, preserves newlines; failure and fallback are handled',async()=>{
   const {dom,w,d}=await setup();
   const buttons=d.querySelectorAll('.copy-code');

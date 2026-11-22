@@ -127,6 +127,7 @@ npx hexo server
 | --- | --- | --- |
 | `search.enable` | `true` | 开启／关闭站内搜索；关闭时不生成 `search.json` |
 | `toc.enable` | `true` | 开启／关闭文章目录 |
+| `reading.progress` | `true` | 是否显示文章顶部阅读进度条 |
 | `reading.lightbox` | `false` | 是否开启正文图片灯箱 |
 | `sidebar.sticky` | `true` | 桌面端最近文章与分类区域是否吸附 |
 | `feed.enable` | `true` | 是否生成内置 Atom 订阅 |
@@ -268,9 +269,26 @@ lightbox: false
 
 `width` 与 `height` 应填写原图的真实像素尺寸。远程图片或无法自动识别尺寸的图片尤其建议手动填写，以减少页面加载时的布局跳动。
 
+### 响应式 WebP
+
+如需为本地照片提供多种宽度，可提前生成 WebP 文件，放在站点的 `source/` 下，再在 `_config.milo.yml` 中按原图路径配置：
+
+```yaml
+img:
+  responsive:
+    /images/photo.jpg:
+      - /images/photo-320.webp
+      - /images/photo-640.webp
+      - /images/photo-1200.webp
+```
+
+封面和正文仍引用原图路径。候选图应保持与原图相同的宽高比例，最大宽度可按原图和高像素密度屏幕的需求选择。浏览器按显示宽度和像素密度选图，原图用于回退和灯箱查看。Milo 在构建时读取候选文件的宽度，跳过缺失或无法识别的文件。删除对应配置即可恢复只使用原图。当前版本使用站点提供的候选文件。上传原图后自动生成 WebP 的可选 Hexo 插件仍在规划中。
+
 ## 阅读、评论、订阅与 SEO
 
 ### 阅读体验
+
+将 `reading.progress` 设为 `false` 可同时关闭桌面和手机的顶部阅读进度条。目录和灯箱可分别设置。
 
 Milo 包含桌面文章目录、手机折叠目录、阅读进度、代码复制和可选灯箱。目录会根据文章中的 Markdown 标题自动生成；无需手动维护目录清单。
 

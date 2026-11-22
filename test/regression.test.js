@@ -21,6 +21,7 @@ test('Hexo builds: canonical, Disqus, pagination totals and navigation',async()=
     await fs.mkdir(path.join(base,'source/_posts'),{recursive:true});
     await fs.mkdir(path.join(base,'source/images'),{recursive:true});
     await fs.copyFile(path.join(theme,'source/images/milo-social.png'),path.join(base,'source/images/cover.png'));
+    await fs.writeFile(path.join(base,'source/images/sample.webp'),Buffer.from('UklGRiIAAABXRUJQVlA4IBYAAAAwAQCdASoBAAEADsD+JaQAA3AAAAAA','base64'));
     await fs.writeFile(path.join(base,'source/images/portrait.svg'),'<svg xmlns="http://www.w3.org/2000/svg" width="300" height="900" viewBox="0 0 300 900"><rect width="300" height="900" fill="#1764b0"/></svg>');
     const readingContent='\n\n## Reading chapter\n\n'+('A paragraph with **emphasis**, [a link](https://example.com) and `inline code`. 阅读体验测试。\n\n'.repeat(12))+'### Code example\n\n```js\nconst message = "Hello <Milo>";\nconsole.log(message);\n```\n\n#### Image examples\n\n![Preview](/images/milo-social.png)\n\n<img src="/images/milo-social.png" width="1200" height="630" class="milo-screenshot" alt="Sized image">\n\n<img src="https://example.com/remote.png" loading="eager" decoding="sync" width="600" height="400" alt="Remote">\n\n## Final chapter\n\n'+('Final paragraph. 最后的段落。\n\n'.repeat(12));
     for(let i=1;i<=5;i++)await fs.writeFile(path.join(base,`source/_posts/post-${i}.md`),`---\ntitle: Post ${i}\ndate: ${i===5?'2025-02-01':'2026-01-0'+i} 12:00:00\ncategories: [Notes]\ntags: [Test]\ntoc: ${i!==5}\nlightbox: ${i!==2}\ncover_fit: ${i===3?'contain':i===4?'invalid':i===2?'cover':''}\n${i===3?'thumbnail':'cover'}: ${i===1?'/images/cover.png':i===2?'https://cdn.example.com/cover.jpg':(i===3 || i===4)?'/images/cover.png':''}\n---\n![Hero](/images/portrait.svg)\n\nSummary & **intro**\n<!-- more -->\nPrivate body${readingContent}`);
@@ -28,7 +29,7 @@ test('Hexo builds: canonical, Disqus, pagination totals and navigation',async()=
       await fs.mkdir(path.join(base,'source',layout),{recursive:true});
       await fs.writeFile(path.join(base,'source',layout,'index.md'),`---\ntitle: ${layout}\nlayout: ${layout}\n---\nHello`);
     }
-    await fs.writeFile(path.join(base,'_config.milo.yml'),'comment:\n  disqus:\n    shortname: milo-test\nreading:\n  lightbox: true\n');
+    await fs.writeFile(path.join(base,'_config.milo.yml'),'comment:\n  disqus:\n    shortname: milo-test\nreading:\n  lightbox: true\nimg:\n  responsive:\n    /images/cover.png: [/images/sample.webp, /images/missing.webp]\n    /images/milo-social.png: [/images/sample.webp]\n    /images/portrait.svg: [/images/missing.webp]\n');
     for(const root of ['/','/demo/']){
       await fs.writeFile(path.join(base,'_config.yml'),`title: Test\ndescription: Site description\nauthor: Author\nurl: https://example.com${root==='/'?'':root.slice(0,-1)}\nroot: ${root}\ntheme: milo\nper_page: 2\narchive_generator:\n  per_page: 2\n  yearly: true\n  monthly: true\ncategory_generator:\n  per_page: 2\ntag_generator:\n  per_page: 2\n`);
       const hexo=new Hexo(base,{silent:true});
@@ -109,6 +110,7 @@ test('Hexo builds: canonical, Disqus, pagination totals and navigation',async()=
         assert.ok(doc.querySelector('.toc-sidebar nav .toc'));
         assert.ok(doc.querySelector('progress[max="100"]'));
         assert.equal(doc.querySelector('#post-content').dataset.lightbox,'true');
+        assert.ok(doc.querySelector('.reading-progress[hidden] progress'));
         assert.equal(doc.querySelector('#post-content img').getAttribute('loading'),'eager');
         assert.equal(doc.querySelector('#post-content img').getAttribute('fetchpriority'),'high');
         assert.equal(doc.querySelector('#post-content img').width,300);
@@ -163,7 +165,9 @@ test('Hexo builds: canonical, Disqus, pagination totals and navigation',async()=
         assert.equal(secondHome.querySelector('#main>h1.sr').textContent,'Test · 文章列表 · 第 2 页');
         assert.equal(secondHome.querySelector('#main>h1').nextElementSibling.className,'entry');
         assert.equal(secondHome.querySelector('.cover img').getAttribute('loading'),'eager');
-        assert.equal(secondHome.querySelectorAll('.cover img')[1].getAttribute('loading'),'lazy');
+        const secondCover=secondHome.querySelectorAll('.cover img')[1];
+        assert.equal(secondCover.getAttribute('loading'),'eager');
+        assert.equal(secondCover.hasAttribute('fetchpriority'),false);
         const covers=[...home.querySelectorAll('.cover')];
         for(const entry of [...home.querySelectorAll('.entry'),...secondHome.querySelectorAll('.entry')]){
           const copy=entry.querySelector('.entry-copy'),cover=entry.querySelector('.cover');
@@ -176,13 +180,18 @@ test('Hexo builds: canonical, Disqus, pagination totals and navigation',async()=
         assert.equal(covers[0].classList.contains('cover-contain'),false);
         assert.equal(covers[1].classList.contains('cover-contain'),true);
         assert.equal(covers[0].querySelector('img').getAttribute('src'),root+'images/cover.png');
+        assert.equal(covers[0].querySelector('picture source').getAttribute('srcset'),root+'images/sample.webp 1w');
         assert.equal(new JSDOM(await html('page/3/index.html')).window.document.querySelectorAll('.cover').length,0); // Body-only image is not a cover.
         assert.equal(doc.querySelectorAll('#post-content img.milo-screenshot').length,1);
-        const imageContext={config:hexo.config,page:{path:'plain/index.html'},full_url_for:hexo.extend.helper.get('full_url_for').bind(hexo),url_for:hexo.extend.helper.get('url_for').bind(hexo)};
+        const imageContext={config:hexo.config,theme:hexo.theme.config,page:{path:'plain/index.html'},full_url_for:hexo.extend.helper.get('full_url_for').bind(hexo),url_for:hexo.extend.helper.get('url_for').bind(hexo)};
         const imageHTML=content=>new JSDOM(readingHTML.call(imageContext,content)).window.document.querySelector('img');
         assert.equal(imageHTML('<img src="/images/portrait.svg" width="100">').height,300);
         assert.equal(imageHTML('<img src="/images/portrait.svg" height="600">').width,200);
         assert.equal(imageHTML('<img src="/images/milo-social.png">').width,1200);
+        assert.equal(imageHTML('<img src="/images/milo-social.png">').parentElement.querySelector('source').getAttribute('srcset'),root+'images/sample.webp 1w');
+        assert.equal(imageHTML('<picture><img src="/images/milo-social.png"></picture>').parentElement.hasAttribute('data-milo-responsive'),false);
+        assert.equal(imageHTML('<img src="/images/milo-social.png" srcset="custom.png 2x">').parentElement.tagName,'BODY');
+        assert.equal(imageHTML('<img src="/images/portrait.svg">').parentElement.tagName,'BODY');
         assert.equal(imageHTML('<img src="https://cdn.example.com/not-fetched.png">').hasAttribute('width'),false);
         assert.equal(imageHTML('<img src="missing.png" alt="example loading=lazy">').getAttribute('loading'),'eager');
         assert.equal(imageHTML('<p>'+('Long text '.repeat(100))+'</p><img src="/images/portrait.svg">').getAttribute('loading'),'lazy');
@@ -212,7 +221,7 @@ test('Hexo builds: canonical, Disqus, pagination totals and navigation',async()=
       }finally{await hexo.exit();}
     }
     const normalThemeConfig=await fs.readFile(path.join(base,'_config.milo.yml'),'utf8');
-    await fs.writeFile(path.join(base,'_config.milo.yml'),normalThemeConfig+'\nsidebar:\n  sticky: false\n');
+    await fs.writeFile(path.join(base,'_config.milo.yml'),normalThemeConfig.replace('reading:\n','reading:\n  progress: false\n')+'\nsidebar:\n  sticky: false\n');
     const disabled=new Hexo(base,{silent:true});
     try{
       await disabled.init();await disabled.call('generate');
@@ -221,6 +230,11 @@ test('Hexo builds: canonical, Disqus, pagination totals and navigation',async()=
       assert.ok(doc.querySelector('.sidebar-sticky'));
       assert.equal(doc.querySelector('.sidebar-sticky.is-sticky'),null);
       assert.equal(doc.querySelectorAll('.sidebar-sticky>.side-section').length,2);
+      const post=disabled.locals.get('posts').findOne({title:'Post 1'});
+      const article=new JSDOM(await fs.readFile(path.join(base,'public',post.path,'index.html'),'utf8')).window.document;
+      assert.equal(article.querySelector('.reading-progress'),null);
+      assert.ok(article.querySelector('.mobile-toc'));
+      assert.equal(article.querySelector('#post-content').dataset.lightbox,'true');
     }finally{await disabled.exit();await fs.writeFile(path.join(base,'_config.milo.yml'),normalThemeConfig);}
     // 使用足够文章验证原生 per_page=6 及第二页。
     for(const i of [6,7])await fs.writeFile(path.join(base,`source/_posts/post-${i}.md`),`---\ntitle: Post ${i}\ndate: 2026-02-0${i} 12:00:00\n---\nSix-per-page regression.`);

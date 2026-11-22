@@ -30,6 +30,7 @@ feed:
 
 # 可选文章灯箱；文章可用 lightbox: false 单独禁用。
 reading:
+  progress: true
   lightbox: false
 
 # 双栏布局吸附最近文章与分类区域。

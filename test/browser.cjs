@@ -2,6 +2,7 @@
 // 可选真实浏览器回归套件，依赖运行中的专用预览夹具。
 const fs=require('node:fs/promises'),path=require('node:path'),os=require('node:os'),cp=require('node:child_process'),assert=require('node:assert/strict');
 const site=new URL(process.env.MILO_PREVIEW_URL || 'http://localhost:4001/');
+const progressEnabled=process.env.MILO_TEST_PROGRESS_DISABLED!=='1';
 const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 let timeoutSnapshot;
 async function until(check,label){const started=Date.now();for(let i=0;i<100;i++){try{const value=await check();if(value)return value}catch(e){}await wait(100)}throw Error('Timeout: '+label+'; elapsed='+String(Date.now()-started)+'ms; state='+JSON.stringify(await timeoutSnapshot?.()))}
@@ -44,11 +45,14 @@ async function until(check,label){const started=Date.now();for(let i=0;i<100;i++
       archive.groups.forEach(group=>assert.deepEqual(group.dates,[...group.dates].sort().reverse()));
       assert.equal((await fetch(new URL('archives/page/2/',site))).status,404);
       await navigate('posts/long-reading/');
-      const progress=await evaluate(`(()=>{const p=document.querySelector('.reading-progress'),r=p.getBoundingClientRect();return {width:r.width,viewportWidth:document.documentElement.clientWidth,height:r.height,top:r.top,bottom:r.bottom,nav:document.querySelector('.topbar').getBoundingClientRect().bottom,pointer:getComputedStyle(p).pointerEvents,percent:getComputedStyle(p.querySelector('span')).display,value:p.querySelector('progress').value}})()`);
-      assert.equal(progress.pointer,'none');assert.equal(progress.value,0);
-      if(mobile){
+      assert.equal(await evaluate("!!document.querySelector('.reading-progress')"),progressEnabled);
+      if(progressEnabled){
+        const progress=await evaluate(`(()=>{const p=document.querySelector('.reading-progress'),r=p.getBoundingClientRect();return {width:r.width,viewportWidth:document.documentElement.clientWidth,height:r.height,top:r.top,nav:document.querySelector('.topbar').getBoundingClientRect().bottom,pointer:getComputedStyle(p).pointerEvents,percent:getComputedStyle(p.querySelector('span')).display,value:p.querySelector('progress').value}})()`);
+        assert.equal(progress.pointer,'none');assert.equal(progress.value,0);
         assert.equal(progress.width,progress.viewportWidth);assert.equal(progress.height,3);assert.ok(Math.abs(progress.top-progress.nav)<1);assert.equal(progress.percent,'none');
-        if(safeArea){
+      }
+      if(mobile){
+        if(safeArea && progressEnabled){
           await send('Emulation.setSafeAreaInsetsOverride',{insets:{top:24,bottom:24}});
           await evaluate("document.querySelector('.topbar').style.paddingTop='env(safe-area-inset-top)'");
           await until(async()=>await evaluate("Math.abs(document.querySelector('.reading-progress').getBoundingClientRect().top-document.querySelector('.topbar').getBoundingClientRect().bottom)<1"),'safe-area navigation alignment');
@@ -71,15 +75,21 @@ async function until(check,label){const started=Date.now();for(let i=0;i<100;i++
           await until(async()=>await evaluate(`(()=>{const toc=document.querySelector('.mobile-toc'),a=toc.querySelectorAll('a')[${index}],h=document.getElementById(decodeURIComponent(a.hash.slice(1))),top=h.getBoundingClientRect().top,bottom=document.querySelector('.topbar').getBoundingClientRect().bottom;return !toc.open && document.activeElement===h && a.getAttribute('aria-current')==='location' && top>=bottom && Math.abs(top-bottom-16)<2})()`),'nested TOC jump '+index).catch(async error=>{error.message+=' '+width+'px '+mode+' '+JSON.stringify(await evaluate(`(()=>{const a=document.querySelectorAll('.mobile-toc a')[${index}],h=document.getElementById(decodeURIComponent(a.hash.slice(1)));return {top:h.getBoundingClientRect().top,nav:document.querySelector('.topbar').getBoundingClientRect().bottom,current:a.getAttribute('aria-current'),focus:document.activeElement.id}})()`));throw error});
         }
       }else{
-        assert.equal(progress.width,progress.viewportWidth);assert.equal(progress.height,3);assert.ok(Math.abs(progress.top-progress.nav)<1);assert.equal(progress.percent,'none');
         assert.equal(await evaluate('getComputedStyle(document.querySelector(".toc-sidebar")).display'),width<=900?'none':'block');
       }
-      await evaluate("(()=>{const r=document.querySelector('#post-content').getBoundingClientRect(),offset=parseFloat(document.documentElement.style.getPropertyValue('--reading-offset')),distance=r.height-Math.max(0,innerHeight-offset);scrollTo({top:scrollY+r.top-offset+distance/2,behavior:'instant'})})()");
-      await until(async()=>await evaluate('document.querySelector("progress").value===50'),'reading midpoint');
-      assert.ok(await evaluate("Math.abs(document.querySelector('.reading-progress').getBoundingClientRect().top-document.querySelector('.topbar').getBoundingClientRect().bottom)<1"));
-      await screenshot('milo-top-progress-'+width+'-'+mode);
-      await evaluate('scrollTo({top:document.body.scrollHeight,behavior:"instant"})');
-      await until(async()=>await evaluate('document.querySelector("progress").value===100'),'reading progress');
+      if(progressEnabled){
+        await evaluate("(()=>{const r=document.querySelector('#post-content').getBoundingClientRect(),offset=parseFloat(document.documentElement.style.getPropertyValue('--reading-offset')),distance=r.height-Math.max(0,innerHeight-offset);scrollTo({top:scrollY+r.top-offset+distance/2,behavior:'instant'})})()");
+        await until(async()=>await evaluate('document.querySelector("progress").value===50'),'reading midpoint');
+        assert.ok(await evaluate("Math.abs(document.querySelector('.reading-progress').getBoundingClientRect().top-document.querySelector('.topbar').getBoundingClientRect().bottom)<1"));
+        await screenshot('milo-top-progress-'+width+'-'+mode);
+        await evaluate('scrollTo({top:document.body.scrollHeight,behavior:"instant"})');
+        await until(async()=>await evaluate('document.querySelector("progress").value===100'),'reading progress');
+      }else{
+        await evaluate('scrollTo({top:document.body.scrollHeight,behavior:"instant"})');
+        assert.ok(await evaluate('scrollY>0'));
+        await evaluate('scrollTo({top:0,behavior:"instant"})');
+        await until(async()=>await evaluate('scrollY===0'),'return to top without progress');
+      }
       await navigate('posts/code-lab/');
       const code=await evaluate(`(()=>{const f=document.querySelector('figure.highlight');f.scrollIntoView({block:'center',behavior:'instant'});const result={width:f.clientWidth,scrollWidth:f.scrollWidth,viewport:innerWidth};f.scrollLeft=f.scrollWidth;result.left=f.scrollLeft;const line=[...f.querySelectorAll('.code .line')].sort((a,b)=>b.textContent.length-a.textContent.length)[0],walker=document.createTreeWalker(line,NodeFilter.SHOW_TEXT);let last,node;while(node=walker.nextNode())if(node.length)last=node;const range=document.createRange();range.setStart(last,last.length-1);range.setEnd(last,last.length);const end=range.getBoundingClientRect(),rect=f.getBoundingClientRect();result.endVisible=end.left>=rect.left && end.right<=rect.right+1;return result})()`);
       assert.equal(code.viewport,width);assert.ok(code.scrollWidth>code.width);assert.ok(code.left>0);assert.equal(code.endVisible,true,'End of long line must remain reachable');
@@ -111,8 +121,10 @@ async function until(check,label){const started=Date.now();for(let i=0;i<100;i++
       assert.equal(await evaluate('document.querySelector("#post-content a img").hasAttribute("role")'),false);
       assert.equal(await evaluate('document.querySelector("#post-content img[data-no-lightbox]").classList.contains("lightbox-image")'),false);
       await navigate('posts/short-note/');
-      await until(async()=>await evaluate('document.querySelector("progress").value===100'),'short article fully visible');
-      assert.ok(await evaluate("Math.abs(document.querySelector('.reading-progress').getBoundingClientRect().top-document.querySelector('.topbar').getBoundingClientRect().bottom)<1"));
+      if(progressEnabled){
+        await until(async()=>await evaluate('document.querySelector("progress").value===100'),'short article fully visible');
+        assert.ok(await evaluate("Math.abs(document.querySelector('.reading-progress').getBoundingClientRect().top-document.querySelector('.topbar').getBoundingClientRect().bottom)<1"));
+      }else assert.equal(await evaluate("document.querySelector('.reading-progress')===null"),true);
     }
     async function checkSearchWrap(width,mode){
       const post=posts.find(p=>p.url.endsWith('/posts/long-title/'));
@@ -319,7 +331,7 @@ async function until(check,label){const started=Date.now();for(let i=0;i<100;i++
       assert.deepEqual(errors,[]);console.log('Passed cover sizing matrix.');return;
     }
     let combinations=0;
-    for(const width of [1280,801,800,480,390,360,320]){
+    for(const width of [1280,1023,900,801,800,480,390,360,320]){
       await send('Emulation.setDeviceMetricsOverride',{width,height:844,deviceScaleFactor:1,mobile:width<600});
       await navigate('');
       const home=await evaluate(`(()=>{const nav=document.querySelector('.topbar').getBoundingClientRect(),heading=document.querySelector('.entry').getBoundingClientRect(),entries=[...document.querySelectorAll('.entry')];return {y:scrollY,width:innerWidth,clientWidth:document.documentElement.clientWidth,headingTop:heading.top,navBottom:nav.bottom,count:entries.length,rows:entries.map(e=>{const r=e.getBoundingClientRect(),copy=e.querySelector('.entry-copy');return {top:r.top,bottom:r.bottom,width:copy.clientWidth,scroll:copy.scrollWidth}})}})()`);

@@ -90,15 +90,32 @@ function localImageSize(src,context){
     }
   }catch(e){}
 }
+// 站点可提供预生成的 WebP，宽度从真实文件读取，缺失候选时沿用原图。
+function webpSources(src,context){
+  const images=context?.theme?.img?.responsive;
+  if(!images || !Object.hasOwn(images,src) || !Array.isArray(images[src]))return '';
+  const sources=new Map();
+  for(const variant of images[src]){
+    if(typeof variant!=='string' || !/^\/(?!\/)[^\s,?#\\]+\.webp$/i.test(variant))continue;
+    const url=context.url_for(variant,{relative:false});
+    const dimensions=localImageSize(url,context);
+    if(dimensions?.type==='webp')sources.set(dimensions.width,url);
+  }
+  return [...sources].sort(([a],[b])=>a-b).map(([width,url])=>url+' '+width+'w').join(', ');
+}
+hexo.extend.helper.register('milo_webp',function(src){return webpSources(src,this)});
+
 // 只增强文章输出，SEO、摘要和订阅保留原始内容。
 hexo.extend.helper.register('milo_reading_content',function(content){
-  let firstImage=true;
-  return String(content || '').replace(/<!--[\s\S]*?-->|<(pre|script|style)\b[^>]*>[\s\S]*?<\/\1\s*>|<img\b(?:[^>"']|"[^"]*"|'[^']*')*>/gi,(tag,block,offset)=>{
+  let firstImage=true,inPicture=false;
+  return String(content || '').replace(/<!--[\s\S]*?-->|<(pre|script|style)\b[^>]*>[\s\S]*?<\/\1\s*>|<\/?picture\b(?:[^>"']|"[^"]*"|'[^']*')*>|<img\b(?:[^>"']|"[^"]*"|'[^']*')*>/gi,(tag,block,offset)=>{
+    if(/^<\/?picture\b/i.test(tag))inPicture=!tag.startsWith('</');
     if(!/^<img\b/i.test(tag))return tag;
     const attributes=new Map([...tag.matchAll(/\s([^\s"'<>/=]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+)))?/g)].map(m=>[m[1].toLowerCase(),m[2] ?? m[3] ?? m[4] ?? '']));
     const add=[],first=firstImage && stripHTML(String(content || '').slice(0,offset)).length<600;firstImage=false;
+    const lazy=(attributes.get('loading') ?? (first?'eager':'lazy')).toLowerCase()==='lazy';
     if(!attributes.has('loading'))add.push('loading="'+(first?'eager':'lazy')+'"');
-    if(first && !attributes.has('fetchpriority') && attributes.get('loading')!=='lazy')add.push('fetchpriority="high"');
+    if(first && !attributes.has('fetchpriority') && !lazy)add.push('fetchpriority="high"');
     if(!attributes.has('decoding'))add.push('decoding="async"');
     const src=attributes.get('src') || '',root=this?.config?.root || '/';
     if(!attributes.has('width') || !attributes.has('height') || (root!=='/' && src.startsWith('/') && !src.startsWith('//') && !src.startsWith(root))){
@@ -110,7 +127,12 @@ hexo.extend.helper.register('milo_reading_content',function(content){
         if(!attributes.has('height'))add.push('height="'+(width>0?Math.round(width*dimensions.height/dimensions.width):dimensions.height)+'"');
       }
     }
-    return add.length?tag.replace(/\s*\/?>(?=\s*$)/,' '+add.join(' ')+'$&'):tag;
+    if(add.length)tag=tag.replace(/\s*\/?>(?=\s*$)/,' '+add.join(' ')+'$&');
+    if(inPicture || attributes.has('srcset'))return tag;
+    const sources=webpSources(unescapeHTML(src),this);
+    if(!sources)return tag;
+    const sizes=(lazy?'auto, ':'')+'(max-width: 808px) calc(100vw - 48px), 760px';
+    return '<picture data-milo-responsive><source type="image/webp" srcset="'+escapeHTML(sources)+'" sizes="'+sizes+'">'+tag+'</picture>';
   });
 });
 
