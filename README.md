@@ -8,7 +8,7 @@ Milo 是一款轻量的 Hexo 博客主题。它把文章和个人主页放在首
 
 ![Milo v0.6.0 简体中文桌面首页](docs/images/guide/home-zh.jpg)
 
-截图来自本地 v0.6.0 候选版。在线 Demo 可能运行不同版本。npm 包附带文字文档，截图可在 [GitHub 仓库](https://github.com/twhao/hexo-theme-milo/tree/main/docs/images/guide) 查看。
+截图展示 Milo v0.6.0。更多功能截图见[使用指南](docs/zh-CN/README.md)。
 
 ## 功能概览
 
@@ -23,15 +23,15 @@ Milo 是一款轻量的 Hexo 博客主题。它把文章和个人主页放在首
 
 需要 Node.js、npm 和一个可构建的 Hexo 站点。Git 安装还需要 Git。Milo 声明 Node.js 18+，Hexo 8.1.2 要求 Node.js 20.19+。建议使用仍受支持的 Node.js LTS，已验证 Node.js 22、24、26 和 Hexo 8.1.2。初次使用 Hexo 可从[新建站点](docs/zh-CN/README.md#安装与入门)开始。
 
-### 用 npm 安装候选版
+### 用 npm 安装
 
-在候选版源码目录运行 `npm pack`。将生成的 tarball 放在 Hexo 站点根目录，从站点根目录执行：
+在 Hexo 站点根目录执行：
 
 ```sh
-npm install ./hexo-theme-milo-0.6.0.tgz
+npm install hexo-theme-milo
 ```
 
-候选版尚未上架 npm。软件包公开发布后，可使用 `npm install hexo-theme-milo`。
+需要固定版本时，可运行 `npm install hexo-theme-milo@0.6.0`。[npm 软件包](https://www.npmjs.com/package/hexo-theme-milo)
 
 ### 用 Git 安装
 

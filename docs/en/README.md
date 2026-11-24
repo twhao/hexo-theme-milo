@@ -17,7 +17,7 @@
 
    | Method | Steps |
    | --- | --- |
-   | npm tarball | Run `npm pack` in the candidate source directory. Put `hexo-theme-milo-0.6.0.tgz` in the site root and run `npm install ./hexo-theme-milo-0.6.0.tgz`. npm installs Milo's build dependencies. `npm install hexo-theme-milo` will work after the package is publicly available. |
+   | npm (recommended) | Run `npm install hexo-theme-milo` from the site root. npm installs Milo and its build dependencies. To pin this release, use `npm install hexo-theme-milo@0.6.0`. |
    | Git | From the site root run `git clone https://github.com/twhao/hexo-theme-milo.git themes/milo`, then `npm install --prefix themes/milo --omit=dev`. To pin a version, list tags with `git -C themes/milo tag --list`, switch with `git -C themes/milo switch --detach <published-tag>`, and install that version's dependencies. |
    | Source archive | Choose a published version from the release page. Place the extracted directory containing `layout/`, `scripts/`, and `package.json` at `themes/milo/`, then run `npm install --prefix themes/milo --omit=dev`. Check that the archive has no extra enclosing folder inside `themes/milo/`. |
 
@@ -43,6 +43,10 @@
    npx hexo clean
    npx hexo server --ip 127.0.0.1
    ```
+
+### Install from a local npm tarball
+
+For local development or offline installation, download `hexo-theme-milo-0.6.0.tgz` from the [GitHub Release](https://github.com/twhao/hexo-theme-milo/releases/tag/v0.6.0), or run `npm pack` in the theme source directory. Put the tarball in the Hexo site root and run `npm install ./hexo-theme-milo-0.6.0.tgz`. Offline installation requires the theme dependencies to be available in npm's cache.
 
 ### Build and deploy
 
@@ -197,7 +201,7 @@ With subdirectory hosting, the Markdown renderer may change the body image's `sr
 ## Upgrade and uninstall
 
 1. Back up the site's `_config.yml`, `_config.milo.yml`, `source/`, `package.json`, and lockfile. Move any settings you previously put in the theme directory to the site's `_config.milo.yml`.
-2. Update using your installation method. For npm, install the replacement archive, for example `npm install ./hexo-theme-milo-0.6.0.tgz`. Once a version is on npm, use `npm install hexo-theme-milo@VERSION` for a fixed version. For Git on the default branch, run `git -C themes/milo pull --ff-only`. To update a pinned version, run `git -C themes/milo fetch --tags` and switch to the chosen tag. Reinstall theme dependencies for either Git workflow. For a source archive, back up the old theme directory and replace it with the new one before installing dependencies.
+2. Update using your installation method. For npm, run `npm install hexo-theme-milo@latest` in the site root, or specify the published version you want, for example `npm install hexo-theme-milo@0.6.0`. For Git on the default branch, run `git -C themes/milo pull --ff-only`. To update a pinned version, run `git -C themes/milo fetch --tags` and switch to the chosen tag. Reinstall theme dependencies for either Git workflow. For a source archive, back up the old theme directory and replace it with the new one before installing dependencies.
 3. Run `npx hexo clean` and `npx hexo generate`. Check the homepage, a post, and your settings before deployment.
 4. To uninstall, first point the site's `theme` at a different installed theme. Run `npm uninstall hexo-theme-milo` for an npm install. For Git or an archive, move `themes/milo/` outside the site as a backup. You can keep the site configuration and source content.
 

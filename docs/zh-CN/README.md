@@ -17,7 +17,7 @@
 
    | 方式 | 操作 |
    | --- | --- |
-   | npm 本地包 | 在候选版源码目录运行 `npm pack`。将生成的 `hexo-theme-milo-0.6.0.tgz` 放到站点根目录，运行 `npm install ./hexo-theme-milo-0.6.0.tgz`。npm 会安装 Milo 的构建依赖。正式上架后才可使用 `npm install hexo-theme-milo`。 |
+   | npm（推荐） | 在站点根目录运行 `npm install hexo-theme-milo`，npm 会安装主题及其构建依赖。需要固定此版本时，运行 `npm install hexo-theme-milo@0.6.0`。 |
    | Git | 在站点根目录运行 `git clone https://github.com/twhao/hexo-theme-milo.git themes/milo`，再运行 `npm install --prefix themes/milo --omit=dev`。克隆后可用 `git -C themes/milo tag --list` 查看可用标签，并用 `git -C themes/milo switch --detach <已发布的标签>` 固定版本，再安装该版本依赖。 |
    | 源码压缩包 | 从版本下载页选择已发布版本。将包含 `layout/`、`scripts/`、`package.json` 的解压目录放在 `themes/milo/`，再执行 `npm install --prefix themes/milo --omit=dev`。展开后避免多套一层同名目录。 |
 
@@ -43,6 +43,10 @@
    npx hexo clean
    npx hexo server --ip 127.0.0.1
    ```
+
+### 从本地 npm 包安装
+
+本地开发或离线安装时，可从 [GitHub Release](https://github.com/twhao/hexo-theme-milo/releases/tag/v0.6.0) 下载 `hexo-theme-milo-0.6.0.tgz`，也可在主题源码目录运行 `npm pack` 生成包。将包放到 Hexo 站点根目录，再运行 `npm install ./hexo-theme-milo-0.6.0.tgz`。离线安装要求主题依赖已在 npm 缓存中。
 
 ### 构建与部署
 
@@ -197,7 +201,7 @@ img:
 ## 升级与卸载
 
 1. 备份站点 `_config.yml`、`_config.milo.yml`、`source/`、`package.json` 和锁文件。把以前直接写在主题目录中的设置迁到站点的 `_config.milo.yml`。
-2. 按安装方式更新。npm 用户在站点根目录用 `npm install ./hexo-theme-milo-0.6.0.tgz` 更新包。正式上架的版本可使用 `npm install hexo-theme-milo@版本号`。Git 默认分支可运行 `git -C themes/milo pull --ff-only`，固定版本先 `git -C themes/milo fetch --tags` 再切到选定标签。两种 Git 更新都需重新安装主题依赖。压缩包方式先备份旧目录，再换成新目录并安装依赖。
+2. 按安装方式更新。npm 用户在站点根目录运行 `npm install hexo-theme-milo@latest`，或指定已发布的版本，例如 `npm install hexo-theme-milo@0.6.0`。Git 默认分支可运行 `git -C themes/milo pull --ff-only`，固定版本先 `git -C themes/milo fetch --tags` 再切到选定标签。两种 Git 更新都需重新安装主题依赖。压缩包方式先备份旧目录，再换成新目录并安装依赖。
 3. 运行 `npx hexo clean` 和 `npx hexo generate`，检查首页、文章和配置后再部署。
 4. 卸载前先将站点 `theme` 改为另一个已安装的主题。npm 安装可运行 `npm uninstall hexo-theme-milo`。Git 或压缩包安装可将 `themes/milo/` 移到站点外保留备份。站点的 `_config.milo.yml` 和源内容可保留。
 
