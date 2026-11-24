@@ -1,6 +1,6 @@
 {
   "name": "hexo-theme-milo",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "description": "基于 Hexo 的轻量级响应式博客主题，支持深浅色模式、文章搜索与阅读导航",
   "license": "MIT",
   "keywords": [
@@ -14,6 +14,7 @@
   "scripts": {
     "check": "node --check scripts/milo.js && node --check source/js/milo.js && node --check source/js/reading.js",
     "test": "node --test test/*.test.js",
+    "test:package": "node test/package.cjs",
     "test:browser": "node test/browser.cjs"
   },
   "files": [
@@ -24,18 +25,22 @@
     "examples",
     "_config.yml",
     "_config.yml.example",
+    "_config.en.yml.example",
     "README.md",
+    "README.en.md",
+    "docs/zh-CN",
+    "docs/en",
     "LICENSE",
-    "CHANGELOG.md",
-    "CONTRIBUTING.md",
-    "VERIFICATION.md",
-    "PRIVACY_REVIEW.md"
+    "CHANGELOG.md"
   ],
   "repository": {
     "type": "git",
     "url": "https://github.com/twhao/hexo-theme-milo.git"
   },
   "homepage": "https://github.com/twhao/hexo-theme-milo#readme",
+  "bugs": {
+    "url": "https://github.com/twhao/hexo-theme-milo/issues"
+  },
   "dependencies": {
     "hexo-util": "^3.3.0 || ^4.0.0",
     "image-size": "^2.0.2"

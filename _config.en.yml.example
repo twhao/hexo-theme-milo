@@ -1,0 +1,152 @@
+# Milo complete theme configuration · v0.6.0
+# Copy this file to the Hexo site root as _config.milo.yml.
+# All active values match the theme defaults. Examples are commented out.
+# To replace an empty menu, social, or image mapping, remove the empty setting
+# before enabling the example. Keep one copy of each YAML key. Regenerate the
+# site after editing, and restart the local server if needed.
+#
+# The site's _config.yml manages theme: milo, title, author, description, language,
+# url, root, per_page, and Hexo generators. Language defaults to zh-CN when
+# omitted, also supports en, and falls back to English if no selection is supported.
+# The site's theme_config overrides matching settings in this file.
+# Put cover, thumbnail, cover_fit, toc, comments, lightbox, and other per-post
+# settings in the post's front matter. Keep your existing _config.milo.yml on upgrade.
+
+# Appearance and author bio
+uiux:
+  # Author bio shown on the author card and about page. The default '' leaves it empty.
+  # Use a string or a list of strings. List entries are joined with spaces.
+  # For example, '读书与写作' or ['读书与写作', '记录日常'].
+  slogan: ''
+  # Primary button, link and accent, and page background colors in light mode.
+  # The default null uses the theme palette. Enter any valid CSS color string.
+  # For example, '#315c46', '#2a7', 'rgb(33, 92, 74)', 'hsl(150, 30%, 35%)',
+  # or 'seagreen'. Quote color strings, especially those starting with #.
+  # Dark mode keeps the theme's dark palette. Check text contrast after customization.
+  primary_color: null # Default light #2866a5, dark #8db8e8. Example '#315c46'
+  link_color: null # Default light #2866a5, dark #8db8e8. Example '#215c4a'
+  bg_color: null # Default light #f8f8f8, dark #181b20. Example '#edf3ee'
+
+# Avatar, article images, and covers
+img:
+  # The default '' hides the avatar. Reference files under source/images/ as /images/ paths.
+  # For example, '/images/avatar.png' or 'https://example.com/avatar.png'.
+  avatar: ''
+  # Responsive WebP mapping. The default {} uses the original images.
+  # Each key is the original image's actual reference in the cover or article.
+  # Each value is a list of pre-generated local WebP paths. Put variants under
+  # source/images/ and start each path with /. Remote variant URLs are unsupported.
+  # If your Markdown renderer adds a subdirectory prefix such as /blog/ to src,
+  # add another key for the rendered src. Variant paths still start with /images/.
+  # Generate variants in advance. Milo skips missing variants and keeps the
+  # original for fallback and the lightbox.
+  # Set a post's cover or thumbnail to select its cover, and cover_fit: contain to show the entire image.
+  responsive: {}
+  # responsive:
+  #   /images/reading.jpg:
+  #     - /images/reading-480.webp
+  #     - /images/reading-960.webp
+
+# Favicon
+head:
+  favicon:
+    # The default '' omits the favicon link. Use a site path or HTTP(S) URL.
+    # For example, '/images/favicon.svg'. The ico key accepts any browser-supported favicon format.
+    ico: ''
+
+# Top navigation
+# null uses the built-in Home, Archives, Categories, Tags, and About links.
+# {} hides the menu links. Use a mapping from labels to site paths or HTTP(S) URLs.
+# Milo shows the labels as written and follows YAML order. Create the target pages
+# or configure the relevant Hexo generator before linking to them.
+menu: null
+# menu:
+#   首页: /
+#   归档: /archives/
+#   关于: /about/
+#   联系: contact/
+#   项目主页: https://example.com/projects/
+
+# Author links
+# The default {} shows no icons. Milo skips empty or invalid entries.
+# Except for email, use HTTP(S) URLs or existing site paths.
+# email takes an email address or mailto: link. rss: true uses the first available
+# feed. You can set a feed path such as '/rss2.xml', or false to hide the link.
+# The examples cover every built-in name and one custom platform. Keep the ones you need.
+# GitHub, email, feeds, and websites have dedicated icons. Other links use a generic icon.
+social: {}
+# social:
+#   github: https://github.com/example
+#   email: reader@example.com # or 'mailto:reader@example.com'
+#   rss: true
+#   website: https://example.com/
+#   mastodon: https://example.org/@reader
+#   bluesky: https://bsky.app/profile/reader.example.com
+#   linkedin: https://www.linkedin.com/in/example/
+#   x: https://x.com/example
+#   youtube: https://www.youtube.com/@example
+#   instagram: https://www.instagram.com/example/
+#   bilibili: https://space.bilibili.com/123456
+#   weibo: https://weibo.com/example
+#   作品集: https://example.com/portfolio/
+
+# Search, table of contents, reading, and sidebar
+search:
+  # true (default) generates search.json and shows navigation search. false disables both.
+  # No search service or plugin is needed. Copy the theme's examples/pages/search.md
+  # to source/search/index.md in your site. To remove that page, move its source file.
+  enable: true
+toc:
+  # true (default) builds a table of contents from headings. false disables it
+  # site-wide. Use toc: false on an individual post to hide it there.
+  enable: true
+reading:
+  # true (default) shows reading progress below the top navigation. false hides it.
+  progress: true
+  # false (default) disables the lightbox. true enables image previews by click or keypress.
+  # Use lightbox: false for one post, or data-no-lightbox on one HTML image.
+  # Linked images continue to open their original destinations. No plugin is needed.
+  lightbox: false
+sidebar:
+  # true (default) pins recent posts and categories in two-column layouts. false unpins them.
+  sticky: true
+
+# Disqus comments
+comment:
+  disqus:
+    # The default '' disables comments. Register your site with Disqus and enter
+    # its shortname, such as 'example-forum'. Use letters, digits, and hyphens.
+    # Milo loads comments after a visitor clicks. Use comments: false for one post.
+    # No Hexo comment plugin is needed.
+    # Registration and setup: https://help.disqus.com/en/articles/1717056-publisher-quick-start-guide
+    shortname: ''
+
+# Atom and RSS feeds
+feed:
+  # true (default) enables Milo's built-in Atom feed and discovery. false disables both.
+  # An installed site feed generator takes precedence, and Milo uses its feed paths.
+  # Milo produces atom.xml. For RSS 2.0, install hexo-generator-feed and set
+  # feed.type: rss2 and feed.path: rss2.xml in the site's _config.yml.
+  # Plugin documentation: https://github.com/hexojs/hexo-generator-feed
+  # social.rss adds a link to an existing feed. Site feed: false also disables Milo's feed.
+  enable: true
+  # Latest posts in the built-in Atom feed, default 20. Use a positive integer
+  # such as 10. Configure limits for external generators in the site settings.
+  limit: 20
+
+# SEO and share images
+seo:
+  # The default '' falls back to the author avatar, then the bundled share image.
+  # The post's cover or thumbnail takes precedence.
+  # For example, '/images/share.png' or 'https://example.com/share.png'.
+  # Use a publicly accessible image and correct site url and root for sharing.
+  image: ''
+
+# Footer
+footer:
+  # The default null omits custom lines. Use a string or list such as ['阅读笔记', '持续更新'].
+  # Each list entry gets its own line. Use only HTML you trust.
+  custom_text: null
+  # The default 0 shows the current year. Set an earlier year, such as 2022, for a range.
+  # Technical credits always use English and read the actual Hexo and Milo versions.
+  copyright_since: 0

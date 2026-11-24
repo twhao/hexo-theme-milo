@@ -1,1 +1,1 @@
-<% if(page.total>1){ %><nav class="pager" aria-label="分页"><%- paginator({prev_text:'上一页',next_text:'下一页',mid_size:1,end_size:1}) %></nav><% } %>
+<% if(page.total>1){ %><nav class="pager" aria-label="<%= milo_t('pagination') %>"><%- paginator({prev_text:milo_t('previousPage'),next_text:milo_t('nextPage'),mid_size:1,end_size:1}) %></nav><% } %>

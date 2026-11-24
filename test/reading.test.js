@@ -20,6 +20,7 @@ async function setup(lightbox=true,beforeScripts=()=>{}){
   d.querySelector('#chapter').getBoundingClientRect=()=>({top});
   d.querySelector('#end').getBoundingClientRect=()=>({top:top+1800});
   beforeScripts(w,d);
+  w.document.body.dataset.miloMessages ||= JSON.stringify(require('../languages/zh-CN.json').milo);
   for(const script of ['milo.js','reading.js'])w.eval(await fs.readFile(path.join(__dirname,'../source/js',script),'utf8'));
   return {dom,w,d,scroll(value){top=value;w.dispatchEvent(new w.Event('scroll'));while(frames.length)frames.shift()();}};
 }

@@ -1,5 +1,73 @@
 # 开发与验证
 
+## v0.6.0 候选版本
+
+### 统一配置模板覆盖
+
+| 功能 | 主题配置及验证点 |
+| --- | --- |
+| 作者与颜色 | `uiux.slogan` 列表连接、`uiux.primary_color`、`uiux.link_color`、`uiux.bg_color` 的渲染值 |
+| 图片与图标 | `img.avatar`、`img.responsive`、`head.favicon.ico` 在子路径生成正确链接，覆盖封面及正文候选 |
+| 导航和社交 | `menu` 默认与自定义导航，`social` 的全部 12 个内置名称及自定义名称 |
+| 搜索、阅读与侧栏 | `search.enable`、`toc.enable`、`reading.progress`、`reading.lightbox`、`sidebar.sticky` 默认值及反向设置 |
+| 评论、订阅与分享 | `comment.disqus.shortname`、`feed.enable`、`feed.limit`、`seo.image` 的输出、数量及关闭行为 |
+| 页脚 | `footer.custom_text` 的逐行输出与 `footer.copyright_since` 的年份范围 |
+
+运行 `npm run test:package` 在全新 Hexo 站安装候选包并复制原样模板，再用非默认值检查上述 20 项。测试还逐字节核实 v0.5.1 → v0.6.0 升级保留站点根目录 `_config.milo.yml`。模板是 Git 跟踪文件，npm 白名单也包含该文件。
+
+同一全新站也原样复制了 [Demo 配置范例](examples/_config.milo.yml)，检查配色、内置图片、菜单、配套页面、社交入口、阅读进度、灯箱及评论默认关闭。打包测试另外使用 Hexo 解析中英文注释模板，比较有效配置值及字段顺序。
+
+### 用户文档验收
+
+| 功能范围 | 用户文档入口 |
+| --- | --- |
+| 环境、三种安装方式、目录、预览、构建、部署、备份、升级与卸载 | [简体指南](docs/zh-CN/README.md#安装与入门) · [English guide](docs/en/README.md#installation) |
+| 站点身份、颜色、外观模式、菜单、社交入口、页脚、语言 | [外观与个人品牌](docs/zh-CN/README.md#外观与个人品牌) · [Appearance](docs/en/README.md#appearance-and-author-profile) |
+| 首页、分页、归档、分类、标签、关于、搜索页和 404 | [页面与导航](docs/zh-CN/README.md#页面与导航) · [Pages and navigation](docs/en/README.md#pages-and-navigation) |
+| 搜索、目录、进度、复制、灯箱、侧栏、Disqus、Atom／RSS、分享信息 | [功能配置](docs/zh-CN/README.md#功能配置) · [Features](docs/en/README.md#features) |
+| Front Matter、封面、摘要、正文图片、单篇开关、WebP | [文章写作](docs/zh-CN/README.md#文章写作) · [Writing posts](docs/en/README.md#writing-posts) |
+| 字段归属、默认值、类型、使用示例 | [简体配置参考](docs/zh-CN/configuration.md) · [English reference](docs/en/configuration.md) |
+| 安装、图片、页面、搜索、评论、升级和子路径排查 | [常见问题](docs/zh-CN/README.md#常见问题) · [Troubleshooting](docs/en/README.md#troubleshooting) |
+
+- 核对了 20 个主题默认配置项，示例 YAML 与默认配置逐值相同。双语参考各 48 行字段，两份快速入门和四份文档共 70 个相对链接及 16 个 YAML 片段通过检查。
+- Windows、Node.js 26.13.0、Hexo 8.1.2。按手册从 CLI 初始化空白站，安装 v0.6.0 tarball，逐份复制双语配置、文章和页面示例，验证了本地 HTTP、根路径与子路径、Atom、RSS 2.0、搜索、分页、图片候选、页脚及分享信息。另用公开 Git 标签和相同标签的源码归档验证目录安装。v0.5.1 → v0.6.0 的 npm 升级和卸载由打包回归覆盖。
+- 八张截图来自本地 v0.6.0，包含单列平板导航和作者社交入口。品牌截图使用同一 Demo 的独立副本和手册配色。截图仅随 Git 源码分发，npm 包包含双语 README、指南和参考。
+- RSS 实验发现官方插件注册 `atom`／`rss2`，主题原先只识别 `feed`。修复后官方插件优先生效，真实 RSS 构建只生成一份订阅文件，主题发现链接及社交入口均指向 RSS。Disqus 首次端到端验证需实际论坛和域名，本地已验证按钮、shortname、页面开关、点击后加载、规范地址和失败重试。未执行部署。
+- 此前新建站的旧锁文件审计报告 6 个依赖告警。更新隔离站的上游依赖后复查为 0，主题生产和完整依赖也为 0。依赖链、触发场景与处置见[发行审计](docs/releases/v0.6.0-audit.md)。
+
+### 源码审计
+
+- 对照 v0.5.1 标签和发布说明检查构建脚本、EJS、前端资源、配置、依赖与 npm 清单。分页、SEO、Atom、Disqus、灯箱和响应式 WebP 均已有实现。`hexo-util` 和 `image-size` 均有直接调用，保留两项运行依赖。开发依赖仅用于测试或构建夹具。
+- 找到并处理了空文章分页站点缺首页、页脚仓库旧地址、固定中文文案分散、搜索实体与异步结果、npm 清单包含维护文档等问题。外观偏好、模板结构、正文链接和图片配置沿用 v0.5.1。
+- Disqus 仍可选且按点击启用，内置 Atom 继续让位于站点 Feed 生成器。已有 canonical、Open Graph 和 Twitter Card 通过根路径及子路径回归。当前仍为静态 JSON 全文搜索，未对超大站点引入新的搜索架构。
+
+### 自动化与本地验收
+
+- Windows，Node.js 22.23.5、24.22.3、26.13.0，Hexo 8.1.2。每套 Node 运行 15 项回归，覆盖模板、SEO、Atom、WebP 回退、代码复制、键盘焦点、灯箱和搜索。语法检查、Git 差异检查及独立目录中的官方注册表 `npm ci` 通过。
+- Windows、Node.js 26.13.0 下真实打包 v0.5.1 和候选版，在临时 Hexo 站中完成安装、升级、清理构建及卸载。站点配置逐字节保留。覆盖 0 篇及 48 篇文章、无分类／标签／封面、超长标题、三级目录、表格、代码块、引用、列表、图片、简体中文默认界面及英文回退。
+- 官方 npm 注册表对名称 `hexo-theme-milo` 返回 404，表示查询时没有可读取的公开包。该查询没有预留名称。实际打包包含 44 项，排除测试、CI、临时产物、截图和维护记录。
+- Windows 的 Chrome 158 和 Edge 158 通过 320、800、1440 px 的首页、分页、归档、键盘开关搜索、深浅色、阅读进度、灯箱原图和 404 定向检查。Chrome 另通过 Demo 36 个页面状态、48 篇夹具 144 个列表状态、英文布局 18 个视口与路由组合。进度检查覆盖 60 个进度状态、20 个短文场景和 20 个导航尺寸变化，浏览器无障碍树包含具名进度条。
+- Chrome 完整交互套件通过 18 组宽度与深浅色组合，覆盖多级目录跳转与焦点、代码横向滚动与复制、延迟图片、灯箱、搜索和分页。
+- Windows 上的 Playwright Firefox 159.0 和 WebKit 27.2 同样通过 320、800、1440 px 的定向检查。WebKit 结果代表该引擎测试环境，Safari 应用仍待实测。
+- 本地 Demo 15 篇文章，首页与两页分页保持 6／6／3，10 条页面和资源路由返回 200。静态检查 60 个 HTML 页面引用的 77 个本地路由和资源均存在。CSS、EJS 和阅读脚本的热更新通过。预览站旧 `verify` 脚本要求 12 篇文章，本轮按现有 15 篇内容校验。
+
+### 体积与构建
+
+使用同一 48 篇文章的独立站点在 Windows 上清理后生成。构建时间含 Node 启动，每版记录一次，用于识别数量级变化。
+
+| 指标 | v0.5.1 | v0.6.0 |
+| --- | ---: | ---: |
+| npm tarball（字节，含双语文档） | 49,649 | 约 60,400 |
+| npm 解包（字节） | 138,717 | 约 174,600 |
+| CSS（字节） | 29,510 | 30,778 |
+| 全局 JavaScript（字节） | 9,118 | 9,085 |
+| 阅读 JavaScript（字节） | 5,184 | 5,243 |
+| 首页 HTML（字节） | 8,090 | 8,585 |
+| 搜索索引（字节） | 11,021 | 10,691 |
+| 清理构建（毫秒，单次） | 1,463 | 1,480 |
+
+视口、语言和打包统计来自本地夹具。线上网络性能、macOS/Safari、Android/iOS 真机、屏幕阅读器和远程 Actions 矩阵仍待验证。图片转换与存储成本另见 [图片处理插件评估](docs/image-optimization.md)。
+
 ## 依赖与命令
 
 以下命令需在完整 Git 仓库根目录执行（npm 发布包不包含测试源码）。安装锁定的开发依赖并执行：
@@ -8,6 +76,7 @@
 npm ci
 npm run check
 npm test
+npm run test:package
 ```
 
 开发依赖包含 Hexo、EJS/Markdown 渲染器、首页/归档/分类/标签生成器和 jsdom，不是浏览器依赖。回归测试在系统临时目录创建中性站点，实际构建根目录和 /demo/，检查 SEO、Feed、图片、分页、404、配置分支及阅读/搜索交互，结束后清理夹具。

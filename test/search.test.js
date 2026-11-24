@@ -10,6 +10,7 @@ async function setup(query,posts){
   const {window:w}=dom,d=w.document;let requests=0;
   w.matchMedia=()=>({matches:false,addEventListener(){}});
   w.fetch=async()=>{requests++;return {ok:true,json:async()=>posts}};
+  w.document.body.dataset.miloMessages ||= JSON.stringify(require('../languages/zh-CN.json').milo);
   w.eval(await fs.readFile(path.join(__dirname,'../source/js/milo.js'),'utf8'));
   await tick();
   return {dom,w,d,requests:()=>requests,async submit(value){d.querySelector('input').value=value;d.querySelector('form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));await tick()}};
