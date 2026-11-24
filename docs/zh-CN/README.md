@@ -17,7 +17,7 @@
 
    | 方式 | 操作 |
    | --- | --- |
-   | npm（推荐） | 在站点根目录运行 `npm install hexo-theme-milo`，npm 会安装主题及其构建依赖。需要固定此版本时，运行 `npm install hexo-theme-milo@0.6.0`。 |
+   | npm（推荐） | 在站点根目录运行 `npm install hexo-theme-milo`，npm 会安装主题及其构建依赖。需要固定此版本时，运行 `npm install hexo-theme-milo@0.6.1`。 |
    | Git | 在站点根目录运行 `git clone https://github.com/twhao/hexo-theme-milo.git themes/milo`，再运行 `npm install --prefix themes/milo --omit=dev`。克隆后可用 `git -C themes/milo tag --list` 查看可用标签，并用 `git -C themes/milo switch --detach <已发布的标签>` 固定版本，再安装该版本依赖。 |
    | 源码压缩包 | 从版本下载页选择已发布版本。将包含 `layout/`、`scripts/`、`package.json` 的解压目录放在 `themes/milo/`，再执行 `npm install --prefix themes/milo --omit=dev`。展开后避免多套一层同名目录。 |
 
@@ -46,7 +46,7 @@
 
 ### 从本地 npm 包安装
 
-本地开发或离线安装时，可从 [GitHub Release](https://github.com/twhao/hexo-theme-milo/releases/tag/v0.6.0) 下载 `hexo-theme-milo-0.6.0.tgz`，也可在主题源码目录运行 `npm pack` 生成包。将包放到 Hexo 站点根目录，再运行 `npm install ./hexo-theme-milo-0.6.0.tgz`。离线安装要求主题依赖已在 npm 缓存中。
+本地开发或离线安装时，可从 [GitHub Release](https://github.com/twhao/hexo-theme-milo/releases/tag/v0.6.1) 下载 `hexo-theme-milo-0.6.1.tgz`，也可在主题源码目录运行 `npm pack` 生成包。将包放到 Hexo 站点根目录，再运行 `npm install ./hexo-theme-milo-0.6.1.tgz`。离线安装要求主题依赖已在 npm 缓存中。
 
 ### 构建与部署
 
@@ -68,11 +68,11 @@ npx hexo generate
 - **语言**。站点 `language: zh-CN` 或 `language: en` 控制界面，省略时使用简体中文。所有指定语言均不受支持时使用英文。文章、分类、标签、作者简介及自定义菜单文字照常显示原文。
 - **可复制示例**。主题配置和社交链接的完整 YAML 见[配置参考](configuration.md#主题配置)。
 
-![作者卡片显示四种链接，页面使用绿色背景与强调色](../images/guide/branding.jpg)
+![作者卡片显示四种链接，页面使用绿色背景与强调色](https://raw.githubusercontent.com/twhao/hexo-theme-milo/v0.6.0/docs/images/guide/branding.jpg)
 
-![Milo 的窄屏首页](../images/guide/home-mobile.jpg)
-![Milo 的单列平板导航](../images/guide/home-tablet.jpg)
-![Milo 的深色首页](../images/guide/home-dark.jpg)
+![Milo 的窄屏首页](https://raw.githubusercontent.com/twhao/hexo-theme-milo/v0.6.0/docs/images/guide/home-mobile.jpg)
+![Milo 的单列平板导航](https://raw.githubusercontent.com/twhao/hexo-theme-milo/v0.6.0/docs/images/guide/home-tablet.jpg)
+![Milo 的深色首页](https://raw.githubusercontent.com/twhao/hexo-theme-milo/v0.6.0/docs/images/guide/home-dark.jpg)
 
 ## 页面与导航
 
@@ -114,8 +114,8 @@ Milo 自动生成 `404.html`。如需自定义，创建 `source/404.html` 放完
 - **灯箱**默认关闭，设置 `reading.lightbox: true` 后可点击或用键盘打开支持的正文图片，按 Esc 关闭。已有链接的图片保留原目标。用 `lightbox: false` 关闭单篇文章的灯箱，或在 HTML 图片上加 `data-no-lightbox` 排除单张图。
 - **侧栏吸附**默认开启，用 `sidebar.sticky: false` 关闭最近文章和分类区域的吸附。单栏布局不显示侧栏。
 
-![桌面文章正文和多级目录](../images/guide/article.jpg)
-![搜索结果和关键词高亮](../images/guide/search.jpg)
+![桌面文章正文和多级目录](https://raw.githubusercontent.com/twhao/hexo-theme-milo/v0.6.0/docs/images/guide/article.jpg)
+![搜索结果和关键词高亮](https://raw.githubusercontent.com/twhao/hexo-theme-milo/v0.6.0/docs/images/guide/search.jpg)
 
 ### Disqus 评论
 
@@ -201,7 +201,7 @@ img:
 ## 升级与卸载
 
 1. 备份站点 `_config.yml`、`_config.milo.yml`、`source/`、`package.json` 和锁文件。把以前直接写在主题目录中的设置迁到站点的 `_config.milo.yml`。
-2. 按安装方式更新。npm 用户在站点根目录运行 `npm install hexo-theme-milo@latest`，或指定已发布的版本，例如 `npm install hexo-theme-milo@0.6.0`。Git 默认分支可运行 `git -C themes/milo pull --ff-only`，固定版本先 `git -C themes/milo fetch --tags` 再切到选定标签。两种 Git 更新都需重新安装主题依赖。压缩包方式先备份旧目录，再换成新目录并安装依赖。
+2. 按安装方式更新。npm 用户在站点根目录运行 `npm install hexo-theme-milo@latest`，或指定已发布的版本，例如 `npm install hexo-theme-milo@0.6.1`。Git 默认分支可运行 `git -C themes/milo pull --ff-only`，固定版本先 `git -C themes/milo fetch --tags` 再切到选定标签。两种 Git 更新都需重新安装主题依赖。压缩包方式先备份旧目录，再换成新目录并安装依赖。
 3. 运行 `npx hexo clean` 和 `npx hexo generate`，检查首页、文章和配置后再部署。
 4. 卸载前先将站点 `theme` 改为另一个已安装的主题。npm 安装可运行 `npm uninstall hexo-theme-milo`。Git 或压缩包安装可将 `themes/milo/` 移到站点外保留备份。站点的 `_config.milo.yml` 和源内容可保留。
 

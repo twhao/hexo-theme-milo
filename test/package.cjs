@@ -278,7 +278,7 @@ async function main(){
     const beforeAssets=await assets();
 
     install(site,scratch,current);
-    console.log('Installed v0.6.0 over v0.5.1. Checking configuration and generated routes.');
+    console.log('Installed the current package over v0.5.1. Checking configuration and generated routes.');
     assert.equal(await fs.readFile(path.join(site,'_config.milo.yml'),'utf8'),themeConfig);
     assert.equal(await fs.readFile(path.join(site,'_config.yml'),'utf8'),siteConfig+'zh-CN\n');
     const after=await build(site);
@@ -287,7 +287,7 @@ async function main(){
     assert.equal(index.length,48);
     assert.ok(index.every(post=>!/[\r\n]/.test(post.content)));
     await documentAt(site,'index.html',doc=>{
-      assert.match(doc.querySelector('.footer').textContent,/Milo 0\.6\.0/);
+      assert.ok(doc.querySelector('.footer').textContent.includes('Milo '+manifest.version));
       assert.equal(doc.querySelector('.slogan').textContent,'Package fixture');
       assert.equal(doc.querySelector('.profile-social'),null);
       assert.equal(doc.querySelectorAll('.entry').length,6);
