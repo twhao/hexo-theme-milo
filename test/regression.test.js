@@ -7,12 +7,15 @@ const os=require('node:os');
 const Hexo=require('hexo');
 const {JSDOM}=require('jsdom');
 const theme=path.resolve(__dirname,'..');
+const messages=require('../languages/zh-CN.json').milo;
+const translate=(key,value)=>messages[key].replace('%s',value);
+const headerLocals={milo_t:translate,milo_menu:()=>[],milo_nav_current:()=>false};
 
 test('Hexo builds: canonical, Disqus, pagination totals and navigation',async()=>{
   const base=await fs.mkdtemp(path.join(os.tmpdir(),'milo-regression-'));
   try{
     await fs.mkdir(path.join(base,'themes'),{recursive:true});
-    for(const entry of ['layout','source','_config.yml'])await fs.cp(path.join(theme,entry),path.join(base,'themes/milo',entry),{recursive:true});
+    for(const entry of ['layout','source','languages','_config.yml'])await fs.cp(path.join(theme,entry),path.join(base,'themes/milo',entry),{recursive:true});
     await fs.writeFile(path.join(base,'package.json'),JSON.stringify({hexo:{version:'8.0.0'}}));
     await fs.mkdir(path.join(base,'scripts'),{recursive:true});
     const plugins=Object.keys(require('../package.json').devDependencies).filter(p=>p.startsWith('hexo-')).map(p=>require.resolve(p));
@@ -31,7 +34,7 @@ test('Hexo builds: canonical, Disqus, pagination totals and navigation',async()=
     }
     await fs.writeFile(path.join(base,'_config.milo.yml'),'comment:\n  disqus:\n    shortname: milo-test\nreading:\n  lightbox: true\nimg:\n  responsive:\n    /images/cover.png: [/images/sample.webp, /images/missing.webp]\n    /images/milo-social.png: [/images/sample.webp]\n    /images/portrait.svg: [/images/missing.webp]\n');
     for(const root of ['/','/demo/']){
-      await fs.writeFile(path.join(base,'_config.yml'),`title: Test\ndescription: Site description\nauthor: Author\nurl: https://example.com${root==='/'?'':root.slice(0,-1)}\nroot: ${root}\ntheme: milo\nper_page: 2\narchive_generator:\n  per_page: 2\n  yearly: true\n  monthly: true\ncategory_generator:\n  per_page: 2\ntag_generator:\n  per_page: 2\n`);
+      await fs.writeFile(path.join(base,'_config.yml'),`title: Test\nlanguage: zh-CN\ndescription: Site description\nauthor: Author\nurl: https://example.com${root==='/'?'':root.slice(0,-1)}\nroot: ${root}\ntheme: milo\nper_page: 2\narchive_generator:\n  per_page: 2\n  yearly: true\n  monthly: true\ncategory_generator:\n  per_page: 2\ntag_generator:\n  per_page: 2\n`);
       const hexo=new Hexo(base,{silent:true});
       try{
         await hexo.init();
@@ -212,6 +215,10 @@ test('Hexo builds: canonical, Disqus, pagination totals and navigation',async()=
         hexo.theme.config.feed.enable=false;
         assert.deepEqual(feeds(),[]);assert.deepEqual(await generateFeed({}),[]);
         hexo.theme.config.feed.enable=true;
+        hexo.extend.generator.register('rss2',()=>[]);
+        hexo.config.feed={type:'rss2',path:'updates.xml'};
+        assert.deepEqual(feeds(),[{path:'updates.xml',type:'application/rss+xml'}]);
+        assert.deepEqual(await generateFeed({}),[]);
         hexo.extend.generator.register('feed',()=>[]);
         hexo.config.feed={path:['atom.xml','rss.xml']};
         assert.deepEqual(feeds().map(f=>f.type),['application/atom+xml','application/rss+xml']);
@@ -296,16 +303,18 @@ test('compact author identity uses existing configuration and escapes text',asyn
   const index=await fs.readFile(path.join(theme,'layout/index.ejs'),'utf8');
   for(const [current,author,avatar,slogan,visible] of [[1,'作者','','',true],[2,'作者','','',false],[1,'','','',false],[1,'','/avatar.svg','',true],[1,'','',[],false]]){
     const data={config:{author,title:'示例站点'},theme:{img:{avatar},uiux:{slogan}},page:{current,posts:{each(){}}}};
-    const markup=ejs.render(index,{...data,partial:name=>name==='_parts/identity'?ejs.render(template,{...data,url_for:p=>p}):''});
+    const markup=ejs.render(index,{...data,milo_t:translate,partial:name=>name==='_parts/identity'?ejs.render(template,{...data,url_for:p=>p}):''});
     const dom=new JSDOM(markup);assert.equal(!!dom.window.document.querySelector('.mobile-identity'),visible);dom.window.close();
   }
 });
 
 test('search disclosure preserves drafts, focus and existing GET search',async()=>{
   const header=await fs.readFile(path.join(theme,'layout/_parts/header.ejs'),'utf8'),ejs=require('ejs');
-  const markup=ejs.render(header,{config:{title:'Test'},theme:{search:{enable:true}},page:{path:''},url_for:p=>p,partial:()=>'<svg aria-hidden="true"></svg>'});
+  const markup=ejs.render(header,{...headerLocals,config:{title:'Test'},theme:{search:{enable:true}},page:{path:''},url_for:p=>p,partial:()=>'<svg aria-hidden="true"></svg>'});
   const dom=new JSDOM(markup+'<button id="outside">Outside</button>',{url:'https://example.com',runScripts:'outside-only'});
-  const {window:w}=dom;w.matchMedia=()=>({matches:false,addEventListener(){}});w.eval(await fs.readFile(path.join(theme,'source/js/milo.js'),'utf8'));
+  const {window:w}=dom;w.matchMedia=()=>({matches:false,addEventListener(){}});
+  w.document.body.dataset.miloMessages ||= JSON.stringify(require('../languages/zh-CN.json').milo);
+  w.eval(await fs.readFile(path.join(theme,'source/js/milo.js'),'utf8'));
   const d=w.document,button=d.querySelector('.search-toggle'),form=d.querySelector('.nav-search'),input=form.querySelector('input'),outside=d.querySelector('#outside');
   assert.equal(input.disabled,true);assert.equal(form.getAttribute('aria-hidden'),'true');assert.ok(form.hasAttribute('inert'));
   button.click();assert.equal(d.activeElement,input);assert.equal(input.disabled,false);assert.equal(button.getAttribute('aria-expanded'),'true');
@@ -323,9 +332,10 @@ test('search disclosure preserves drafts, focus and existing GET search',async()
 test('appearance keyboard navigation and focus lifecycle',async()=>{
   const header=await fs.readFile(path.join(theme,'layout/_parts/header.ejs'),'utf8');
   const ejs=require('ejs');
-  const markup=ejs.render(header,{config:{title:'Test'},theme:{search:{enable:false}},page:{path:''},url_for:p=>p});
+  const markup=ejs.render(header,{...headerLocals,config:{title:'Test'},theme:{search:{enable:false}},page:{path:''},url_for:p=>p});
   const dom=new JSDOM(markup+'<button id="outside">Outside</button>',{url:'https://example.com',runScripts:'outside-only'});
   const {window:w}=dom;let systemChange;const system={matches:false,addEventListener(type,listener){systemChange=listener}};w.matchMedia=()=>system;
+  w.document.body.dataset.miloMessages ||= JSON.stringify(require('../languages/zh-CN.json').milo);
   w.eval(await fs.readFile(path.join(theme,'source/js/milo.js'),'utf8'));
   const d=w.document,toggle=d.querySelector('.appearance-button'),menu=d.querySelector('.appearance-menu'),choices=[...menu.querySelectorAll('button')];
   assert.match(toggle.getAttribute('aria-label'),/当前浅色（跟随系统）/);
@@ -353,7 +363,7 @@ test('Homepage summaries decode entities once and keep EJS HTML escaping',async(
   const expected='example.com/project/milo & "quoted" \'single\' <img src=x onerror=window.__miloXSS=1> <script>window.__miloXSS=1</script> &lt;b&gt;';
   try{
     await fs.mkdir(path.join(base,'themes'),{recursive:true});
-    for(const entry of ['layout','source','_config.yml'])await fs.cp(path.join(theme,entry),path.join(base,'themes/milo',entry),{recursive:true});
+    for(const entry of ['layout','source','languages','_config.yml'])await fs.cp(path.join(theme,entry),path.join(base,'themes/milo',entry),{recursive:true});
     await fs.mkdir(path.join(base,'scripts'),{recursive:true});
     await fs.writeFile(path.join(base,'package.json'),JSON.stringify({hexo:{version:'8.0.0'}}));
     const plugins=Object.keys(require('../package.json').devDependencies).filter(p=>p.startsWith('hexo-')).map(p=>require.resolve(p));

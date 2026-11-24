@@ -1,4 +1,6 @@
 # Milo 主题默认配置
+# 界面语言在站点根目录的 _config.yml 设置。支持 zh-CN 和 en，默认 zh-CN，
+# 指定的语言均不受支持时回退到 en。
 uiux:
   slogan: ''
   primary_color: null
@@ -6,6 +8,7 @@ uiux:
   bg_color: null
 img:
   avatar: ''
+  responsive: {}
 head:
   favicon:
     ico: ''
@@ -36,3 +39,9 @@ reading:
 # 双栏布局吸附最近文章与分类区域。
 sidebar:
   sticky: true
+
+# 留空使用内置导航；自定义时按填写顺序显示，标签可自由命名。
+menu: null
+# 可选作者链接。支持 github、email、rss、website 及自定义平台名。
+# rss: true 使用站点现有订阅地址。
+social: {}

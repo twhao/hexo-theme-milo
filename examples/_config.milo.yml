@@ -1,0 +1,84 @@
+# Milo v0.6.0 用户配置范例，基于 Demo 的常用设置。
+# 复制此文件到 Hexo 站点根目录，命名为 _config.milo.yml。
+# 若站点已有同名文件，请先备份并按需合并。站点 _config.yml 仍需设置
+# theme: milo、title、author、language、url 和 root 等站点信息。
+#
+# 将主题 examples/pages/ 内的文件复制到站点：
+#   about.md      -> source/about/index.md
+#   categories.md -> source/categories/index.md
+#   tags.md       -> source/tags/index.md
+#   search.md     -> source/search/index.md
+# 归档及分类、标签详情由 Hexo 对应的生成器创建，沿用默认目录。
+#
+# 此范例使用 Milo 自带的 /images/milo-social.png，无需额外下载图片。
+# 替换头像、图标或分享图时，将素材放到站点 source/images/ 下；
+# 例如 source/images/avatar.png 在配置中写为 /images/avatar.png。
+# 试用灯箱时，可在任意文章正文加入：
+# ![阅读笔记示例图](/images/milo-social.png)
+# 保存后运行 npx hexo clean 和 npx hexo generate，再预览。
+
+uiux:
+  slogan: '记录读书、写作和日常发现' # 替换为自己的简介
+  primary_color: '#315c46'
+  link_color: '#215c4a'
+  bg_color: '#edf3ee'
+
+img:
+  avatar: /images/milo-social.png
+  responsive: {}
+  # 可选：提前生成 WebP，确保原图和候选都存放在站点 source/images/ 后，
+  # 将上面的空映射替换成下面的内容。封面或正文需引用同一个原图路径。
+  # responsive:
+  #   /images/reading.jpg:
+  #     - /images/reading-480.webp
+  #     - /images/reading-960.webp
+
+head:
+  favicon:
+    ico: /images/milo-social.png # 可替换成自己的方形图标
+
+# 标签按原文显示。英文站点可改成 Home、Archives、Categories、Tags、About，
+# 或改为 menu: null，使用随界面语言变化的内置菜单。
+menu:
+  首页: /
+  归档: /archives/
+  分类: /categories/
+  标签: /tags/
+  关于: /about/
+
+social:
+  github: https://github.com/twhao/hexo-theme-milo # 公开项目示例，替换为自己的链接
+  email: reader@example.com # 示例邮箱，发布前替换为可公开的联系地址
+  rss: true # 链接已有订阅，此范例使用 /atom.xml
+  website: https://example.com/ # 示例网站，替换为自己的公开链接
+
+search:
+  enable: true
+toc:
+  enable: true
+reading:
+  progress: true
+  lightbox: true
+sidebar:
+  sticky: true
+
+feed:
+  enable: true
+  limit: 20
+  # 此范例使用内置 Atom，无需插件。若需 RSS 2.0，安装 hexo-generator-feed，
+  # 在站点 _config.yml 配置 feed.type: rss2 和 feed.path: rss2.xml。
+  # https://github.com/hexojs/hexo-generator-feed
+
+comment:
+  disqus:
+    shortname: ''
+    # 评论保持关闭。使用前需向 Disqus 注册站点，再填写实际 shortname，
+    # 如 'example-forum'。无需填写凭据或额外安装 Hexo 评论插件。
+    # https://help.disqus.com/en/articles/1717056-publisher-quick-start-guide
+
+seo:
+  image: /images/milo-social.png
+
+footer:
+  copyright_since: 0
+  custom_text: '阅读笔记 · 持续更新' # 替换为自己的文字，或设为 null 隐藏

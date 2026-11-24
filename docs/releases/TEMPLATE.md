@@ -6,6 +6,7 @@
 - 两份说明共用前六个小节。Release 每条尽量一句话，只保留读者能感受到的变化，下载与更新链接放在最后。
 - 用简体中文说明变化和操作，保留必要的技术名称、命令及配置字段。某类没有改动时直接说明。记录实际验证的环境和未验证的范围，隔离实验只在需要说明范围时提及。
 - 发布时核对版本号、标题、标签、下载入口和安装说明。Release 正文使用绝对链接。
+- 正式发布前核对两种语言的 README、使用指南和配置参考。在新建 Hexo 站按文档验证安装、配置及升级，并用 `npm pack` 核对分发内容。文档缺失、示例无法运行或与源码不一致时，先修正文档再发布。
 
 ## 可复制正文
 
@@ -37,7 +38,7 @@
 ## 下载与更新链接
 
 - [版本下载](https://github.com/twhao/hexo-theme-milo/releases)
-- [安装说明](https://github.com/twhao/hexo-theme-milo#安装与启用)
-- [更新说明](https://github.com/twhao/hexo-theme-milo#更新与卸载)
+- [安装说明](https://github.com/twhao/hexo-theme-milo#快速开始)
+- [更新说明](https://github.com/twhao/hexo-theme-milo/blob/main/docs/zh-CN/README.md#升级与卸载)
 - [完整更新记录](https://github.com/twhao/hexo-theme-milo/blob/main/CHANGELOG.md)
 ```

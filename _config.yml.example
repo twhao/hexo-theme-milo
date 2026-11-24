@@ -1,31 +1,143 @@
-# 复制到博客根目录，命名为 _config.milo.yml
+# Milo 完整主题配置 · v0.6.0
+# 将本文件复制到 Hexo 站点根目录，命名为 _config.milo.yml。
+# 生效的值均为主题默认值，可直接使用。示例均已注释。
+# 替换菜单、社交或图片映射时，先删除对应的空值行，再启用示例，
+# 同一个 YAML 键只保留一份。修改后重新生成，必要时重启本地服务。
+#
+# 站点 _config.yml 管理 theme: milo、title、author、description、language、
+# url、root、per_page 和 Hexo 生成器。language 省略时为 zh-CN，支持 en，
+# 指定语言均不受支持时用英文。站点 theme_config 会覆盖本文件的同名设置。
+# 单篇文章的 cover、thumbnail、cover_fit、toc、comments、lightbox 等
+# 写在文章的 Front Matter 中。已有 _config.milo.yml 可在升级时继续使用。
+
+# 外观与作者简介
 uiux:
-  slogan: '记录与分享'
+  # 作者简介，显示在作者卡片与关于页。默认 ''，表示无简介。
+  # 可填字符串或字符串列表，列表会用空格连接。
+  # 例如 '读书与写作'，或 ['读书与写作', '记录日常']。
+  slogan: ''
+  # 浅色模式的主按钮色、链接与强调色、页面背景色。
+  # 默认 null，使用主题配色。可填写有效 CSS 颜色字符串。
+  # 写法示例 '#315c46'、'#2a7'、'rgb(33, 92, 74)'、'hsl(150, 30%, 35%)'
+  # 或 'seagreen'。建议带引号，尤其是 # 开头的值。
+  # 深色模式继续使用主题深色配色。更换颜色后检查文字对比度。
+  primary_color: null # 默认浅色 #2866a5，深色 #8db8e8；例如 '#315c46'
+  link_color: null # 默认浅色 #2866a5，深色 #8db8e8；例如 '#215c4a'
+  bg_color: null # 默认浅色 #f8f8f8，深色 #181b20；例如 '#edf3ee'
+
+# 头像、正文图片与文章封面
 img:
-  avatar: '' # 填写自己添加的头像路径
+  # 默认 ''，隐藏头像。站点 source/images/ 下的文件用 /images/ 路径引用。
+  # 例如 '/images/avatar.png' 或 'https://example.com/avatar.png'。
+  avatar: ''
+  # 响应式 WebP 映射。默认 {}，直接使用原图。
+  # 键为封面或正文中原图的实际引用，值为预先生成的站内 WebP 路径列表。
+  # 候选图放进站点 source/images/，以 / 开头，不能填远程链接。
+  # 若子路径站点的 Markdown 渲染器给 src 加上了 /blog/ 等前缀，
+  # 为渲染后的 src 再加一个键。候选图路径仍从 /images/ 开始。
+  # Milo 不转换图片。缺失候选会跳过，原图保留作回退及灯箱预览。
+  # 文章的 cover / thumbnail 选定封面，cover_fit: contain 保留整张封面。
+  responsive: {}
+  # responsive:
+  #   /images/reading.jpg:
+  #     - /images/reading-480.webp
+  #     - /images/reading-960.webp
+
+# 网站图标
 head:
   favicon:
-    ico: '' # 填写自己添加的图标路径
-footer:
-  copyright_since: 0
-  custom_text: null
+    # 默认 ''，主题不输出 favicon 链接。支持站内路径和 HTTP(S) 地址。
+    # 例如 '/images/favicon.svg'。ico 是配置键名，可使用浏览器支持的图标格式。
+    ico: ''
+
+# 顶部导航
+# null 使用内置菜单，含首页、归档、分类、标签和关于。
+# {} 隐藏菜单链接。自定义用「标签: 路径或 HTTP(S) 地址」映射，
+# 顺序按 YAML 填写顺序，标签保留原文。目标页面需已创建或由 Hexo 生成。
+menu: null
+# menu:
+#   首页: /
+#   归档: /archives/
+#   关于: /about/
+#   联系: contact/
+#   项目主页: https://example.com/projects/
+
+# 作者社交链接
+# 默认 {}，不显示图标。为空或链接无效的条目会跳过。
+# 除邮箱外，可填 HTTP(S) 地址或已存在的站内路径。
+# email 可填普通邮箱或 mailto: 链接。rss: true 使用第一个可用订阅地址，
+# 也可指定已有的订阅链接，例如 '/rss2.xml'，或者用 false 隐藏。
+# 以下为所有内置名称及一个自定义平台的示例。按需保留。
+# GitHub、邮箱、订阅和网站有专用图标，其他平台使用通用链接图标。
+social: {}
+# social:
+#   github: https://github.com/example
+#   email: reader@example.com # 或 'mailto:reader@example.com'
+#   rss: true
+#   website: https://example.com/
+#   mastodon: https://example.org/@reader
+#   bluesky: https://bsky.app/profile/reader.example.com
+#   linkedin: https://www.linkedin.com/in/example/
+#   x: https://x.com/example
+#   youtube: https://www.youtube.com/@example
+#   instagram: https://www.instagram.com/example/
+#   bilibili: https://space.bilibili.com/123456
+#   weibo: https://weibo.com/example
+#   作品集: https://example.com/portfolio/
+
+# 站内搜索、文章目录、阅读与侧栏
+search:
+  # true（默认）生成 search.json 并显示导航搜索。false 关闭这两项。
+  # 无需搜索服务或插件。将主题 examples/pages/search.md 复制为
+  # 站点 source/search/index.md。关闭后如需移除搜索页，移走该源文件。
+  enable: true
+toc:
+  # true（默认）从正文标题生成目录。false 全站禁用；单篇可用 toc: false。
+  enable: true
+reading:
+  # true（默认）在顶部导航下显示阅读进度；false 隐藏。
+  progress: true
+  # false（默认）关闭。true 允许点击或按键预览正文图片，无需插件。
+  # 单篇用 lightbox: false，单张 HTML 图片可加 data-no-lightbox。
+  # 已有链接的图片继续打开原链接。
+  lightbox: false
+sidebar:
+  # true（默认）在双栏中吸附最近文章和分类；false 取消吸附。
+  sticky: true
+
+# Disqus 评论
 comment:
   disqus:
+    # 默认 ''，停用评论。使用前在 Disqus 注册站点，填写由字母、数字、
+    # 连字符组成的 shortname，例如 'example-forum'，不是完整 URL。
+    # 无需 Hexo 评论插件。访客点击后才加载，单篇可用 comments: false。
+    # 注册与设置：https://help.disqus.com/en/articles/1717056-publisher-quick-start-guide
     shortname: ''
 
-# 分享图：完整 URL 或站内路径，回退到头像及内置 PNG。
-seo:
-  image: ''
-# 内置 Atom 订阅；站点已有 Feed 生成器优先。
+# Atom 与 RSS 订阅
 feed:
+  # true（默认）启用 Milo 的内置 Atom 和订阅发现。false 关闭 Milo 的这两项。
+  # 站点已安装订阅生成器时，该生成器负责输出，Milo 读取其地址。
+  # 内置输出为 atom.xml。若需要 RSS 2.0，可安装 hexo-generator-feed，
+  # 在站点 _config.yml 配置 feed.type: rss2 和 feed.path: rss2.xml。
+  # 插件文档：https://github.com/hexojs/hexo-generator-feed
+  # social.rss 只提供订阅入口，不创建订阅文件。站点 feed: false 也会关闭 Milo 的订阅。
   enable: true
+  # 内置 Atom 文章条数，默认 20。填写正整数，例如 10。外部生成器在站点配置中设数量。
   limit: 20
 
-# 可选文章灯箱；文章可用 lightbox: false 单独禁用。
-reading:
-  progress: true
-  lightbox: false
+# SEO 与分享图片
+seo:
+  # 默认 ''，回退到作者头像和内置分享图。文章 cover 或 thumbnail 优先。
+  # 例如 '/images/share.png' 或 'https://example.com/share.png'。
+  # 公开分享需要可访问的图片及正确的站点 url 和 root。
+  image: ''
 
-# 双栏布局吸附最近文章与分类区域。
-sidebar:
-  sticky: true
+# 页脚
+footer:
+  # 默认 null，不显示自定义行。可填字符串或字符串列表，例如 ['阅读笔记', '持续更新']。
+  # 列表逐行显示。支持可信 HTML，请只填写自己信任的内容。
+  custom_text: null
+  # 默认 0，只显示当前年份。填写较早的起始年份，例如 2022，显示起止年份。
+  # 固定英文的技术署名读取实际 Hexo 和 Milo 版本。
+  copyright_since: 0
