@@ -8,7 +8,7 @@ Milo 是一款轻量的 Hexo 博客主题。它把文章和个人主页放在首
 
 ![Milo v0.6.0 简体中文桌面首页](docs/images/guide/home-zh.jpg)
 
-截图来自本地 v0.6.0 候选版。在线 Demo 可能运行不同版本。npm 包附带文字文档，截图可在 [GitHub 仓库](https://github.com/twhao/hexo-theme-milo/tree/main/docs/images/guide) 查看。
+截图展示 Milo v0.6.0。更多功能截图见[使用指南](docs/zh-CN/README.md)。
 
 ## 功能概览
 
@@ -28,10 +28,10 @@ Milo 是一款轻量的 Hexo 博客主题。它把文章和个人主页放在首
 在 Hexo 站点根目录执行：
 
 ```sh
-npm install hexo-theme-milo@0.6.0
+npm install hexo-theme-milo
 ```
 
-也可从 [GitHub Release](https://github.com/twhao/hexo-theme-milo/releases/tag/v0.6.0) 下载 tarball 放到站点根目录，再运行 `npm install ./hexo-theme-milo-0.6.0.tgz`。
+需要固定版本时，可运行 `npm install hexo-theme-milo@0.6.0`。[npm 软件包](https://www.npmjs.com/package/hexo-theme-milo)
 
 ### 用 Git 安装
 

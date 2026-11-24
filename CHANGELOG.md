@@ -27,7 +27,7 @@ Milo 完善 npm 安装流程，并提供简体中文和英文界面。默认使�
 
 ### 使用提醒
 
-- 继续使用 `theme: milo` 和站点根目录的 `_config.milo.yml`。本地 tarball 可用于提前验证，npm 注册表尚未发布候选版。
+- 继续使用 `theme: milo` 和站点根目录的 `_config.milo.yml`。可从 npm 官方注册表安装 `hexo-theme-milo@0.6.0`。
 
 ### 兼容性与验证
 

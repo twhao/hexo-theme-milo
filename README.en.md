@@ -8,7 +8,7 @@ Milo is a lightweight Hexo theme for personal blogs. It puts writing and the aut
 
 ![Milo v0.6.0 English desktop homepage](docs/images/guide/home-en.jpg)
 
-The screenshot shows the local v0.6.0 candidate. The live demo may run a different version. The npm tarball includes the written guides. Browse the [screenshots on GitHub](https://github.com/twhao/hexo-theme-milo/tree/main/docs/images/guide).
+The screenshot shows Milo v0.6.0. See the [user guide](docs/en/README.md) for more screenshots.
 
 ## Features
 
@@ -26,10 +26,10 @@ You need Node.js, npm, and a working Hexo site. Git installation also requires G
 Run this command in your Hexo site root:
 
 ```sh
-npm install hexo-theme-milo@0.6.0
+npm install hexo-theme-milo
 ```
 
-You can also download the tarball from the [GitHub Release](https://github.com/twhao/hexo-theme-milo/releases/tag/v0.6.0), put it in the site root, and run `npm install ./hexo-theme-milo-0.6.0.tgz`.
+To pin this version, run `npm install hexo-theme-milo@0.6.0`. [npm package](https://www.npmjs.com/package/hexo-theme-milo)
 
 ### Install with Git
 
