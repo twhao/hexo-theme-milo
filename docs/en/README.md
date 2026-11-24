@@ -17,7 +17,7 @@
 
    | Method | Steps |
    | --- | --- |
-   | npm tarball | Run `npm pack` in the candidate source directory. Put `hexo-theme-milo-0.6.0.tgz` in the site root and run `npm install ./hexo-theme-milo-0.6.0.tgz`. npm installs Milo's build dependencies. `npm install hexo-theme-milo` will work after the package is publicly available. |
+   | npm tarball | Run `npm pack` in the candidate source directory. Put `hexo-theme-milo-0.6.0.tgz` in the site root and run `npm install ./hexo-theme-milo-0.6.0.tgz`. npm installs Milo's build dependencies. You can also install directly from the npm registry with `npm install hexo-theme-milo@0.6.0`. |
    | Git | From the site root run `git clone https://github.com/twhao/hexo-theme-milo.git themes/milo`, then `npm install --prefix themes/milo --omit=dev`. To pin a version, list tags with `git -C themes/milo tag --list`, switch with `git -C themes/milo switch --detach <published-tag>`, and install that version's dependencies. |
    | Source archive | Choose a published version from the release page. Place the extracted directory containing `layout/`, `scripts/`, and `package.json` at `themes/milo/`, then run `npm install --prefix themes/milo --omit=dev`. Check that the archive has no extra enclosing folder inside `themes/milo/`. |
 

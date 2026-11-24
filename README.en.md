@@ -21,15 +21,15 @@ The screenshot shows the local v0.6.0 candidate. The live demo may run a differe
 
 You need Node.js, npm, and a working Hexo site. Git installation also requires Git. Milo declares Node.js 18+, and Hexo 8.1.2 requires Node.js 20.19+. Use a supported Node.js LTS release. Node.js 22, 24, and 26 have been tested with Hexo 8.1.2. If you are new to Hexo, start by [creating a site](docs/en/README.md#installation).
 
-### Install the candidate with npm
+### Install with npm
 
-Run `npm pack` in the candidate source directory. Put the resulting tarball in your Hexo site root, then run:
+Run this command in your Hexo site root:
 
 ```sh
-npm install ./hexo-theme-milo-0.6.0.tgz
+npm install hexo-theme-milo@0.6.0
 ```
 
-The candidate has yet to be published on npm. After the package is publicly available, use `npm install hexo-theme-milo`.
+You can also download the tarball from the [GitHub Release](https://github.com/twhao/hexo-theme-milo/releases/tag/v0.6.0), put it in the site root, and run `npm install ./hexo-theme-milo-0.6.0.tgz`.
 
 ### Install with Git
 

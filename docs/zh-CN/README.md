@@ -17,7 +17,7 @@
 
    | 方式 | 操作 |
    | --- | --- |
-   | npm 本地包 | 在候选版源码目录运行 `npm pack`。将生成的 `hexo-theme-milo-0.6.0.tgz` 放到站点根目录，运行 `npm install ./hexo-theme-milo-0.6.0.tgz`。npm 会安装 Milo 的构建依赖。正式上架后才可使用 `npm install hexo-theme-milo`。 |
+   | npm 本地包 | 在候选版源码目录运行 `npm pack`。将生成的 `hexo-theme-milo-0.6.0.tgz` 放到站点根目录，运行 `npm install ./hexo-theme-milo-0.6.0.tgz`。npm 会安装 Milo 的构建依赖。也可从 npm 官方注册表直接运行 `npm install hexo-theme-milo@0.6.0`。 |
    | Git | 在站点根目录运行 `git clone https://github.com/twhao/hexo-theme-milo.git themes/milo`，再运行 `npm install --prefix themes/milo --omit=dev`。克隆后可用 `git -C themes/milo tag --list` 查看可用标签，并用 `git -C themes/milo switch --detach <已发布的标签>` 固定版本，再安装该版本依赖。 |
    | 源码压缩包 | 从版本下载页选择已发布版本。将包含 `layout/`、`scripts/`、`package.json` 的解压目录放在 `themes/milo/`，再执行 `npm install --prefix themes/milo --omit=dev`。展开后避免多套一层同名目录。 |
 
